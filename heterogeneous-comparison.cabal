@@ -51,3 +51,8 @@ library
 source-repository head
   type:     git
   location: https://github.com/LSLeary/heterogeneous-comparison.git
+
+source-repository this
+  type:     git
+  location: https://github.com/LSLeary/heterogeneous-comparison.git
+  tag:      v0.1.0.0
