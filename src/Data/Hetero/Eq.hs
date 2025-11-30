@@ -65,7 +65,7 @@ import Data.Primitive
 import Data.Primitive.MVar qualified as Prim
 
 -- ord-axiomata
-import Data.Type.Ord.Axiomata (minTO)
+import Data.Type.Ord.Axiomata (minTO, Proof(..))
 import Data.Type.Ord.Lemmata (minDefl1, minDefl2)
 
 -- heterogeneous-comparison
@@ -230,9 +230,9 @@ instance (HetEq' f, HetEq' g) => HetEq (Sum f g) where
   type Strength (Sum f g) = Min (Strength f) (Strength g)
   sfg1 `heq` sfg2 = expositRole mfg case (sfg1, sfg2) of
     (InL fx, InL fy) -> case minDefl1 rf rg of
-      Refl -> weakenAL <$> fx `heq` fy
+      QED -> weakenAL <$> fx `heq` fy
     (InR gx, InR gy) -> case minDefl2 rf rg of
-      Refl -> weakenAL <$> gx `heq` gy
+      QED -> weakenAL <$> gx `heq` gy
     _                -> Nothing
    where
     rf = knownRole @(Strength f)

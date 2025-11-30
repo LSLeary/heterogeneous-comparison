@@ -48,7 +48,9 @@ import Data.Coerce (Coercible)
 
 -- ord-axiomata,
 import Data.Type.Ord.Axiomata
-  (Sing, Equivalence(..), TotalOrder(..), BoundedBelow(..), BoundedAbove(..))
+  ( Equivalence(..), TotalOrder(..), BoundedBelow(..), BoundedAbove(..)
+  , Proof(..), Sing
+  )
 
 -- }}}
 
@@ -80,7 +82,7 @@ instance Equivalence RoleKind where
   Nominal          =? Nominal          = Right Refl
   _                =? _                = Left \case{}
 
-  refl _ = Refl
+  refl _ = QED
 
   sub Phantom          Phantom          = Refl
   sub Representational Representational = Refl
@@ -103,7 +105,7 @@ instance TotalOrder RoleKind where
 
   transLeq Phantom          _                t                = least t
   transLeq r                _                Nominal          = greatest r
-  transLeq Representational Representational Representational = Refl
+  transLeq Representational Representational Representational = QED
   transLeq r                s                t                = case r of
     Representational -> case s of -- b
       Nominal -> case t of        -- r
@@ -128,17 +130,17 @@ instance BoundedBelow RoleKind where
   type LowerBound RoleKind = Phantom
   lowerBound = Phantom
   least = \case
-    Phantom          -> Refl
-    Representational -> Refl
-    Nominal          -> Refl
+    Phantom          -> QED
+    Representational -> QED
+    Nominal          -> QED
 
 instance BoundedAbove RoleKind where
   type UpperBound RoleKind = Nominal
   upperBound = Nominal
   greatest = \case
-    Phantom          -> Refl
-    Representational -> Refl
-    Nominal          -> Refl
+    Phantom          -> QED
+    Representational -> QED
+    Nominal          -> QED
 
 instance TestEquality Role where
   testEquality r s = either (const Nothing) Just (r =? s)

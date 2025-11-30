@@ -1,4 +1,6 @@
 
+-- TODO: merge back into Data.Hetero.Evidence.AtLeast
+
 -- --< Header >-- {{{
 
 {-#
@@ -22,56 +24,25 @@ module Data.Hetero.Evidence.AtLeast.Internal (
 
 -- --< Imports >-- {{{
 
--- GHC/base
-import GHC.Exts (Any)
-
 -- base
-import Prelude hiding (id, (.))
-import Data.Type.Equality ((:~:)(..))
 import Data.Type.Ord (Min)
 import Control.Category (Category(..))
-import Unsafe.Coerce (unsafeCoerce)
 
 -- ord-axiomata
-import Data.Type.Ord.Axiomata (type (<=), BoundedAbove(..), Proof)
+import Data.Type.Ord.Relations (type (<=))
+import Data.Type.Ord.Axiomata (BoundedAbove(..), Proof(..))
 import Data.Type.Ord.Lemmata (minMono)
 
 -- heterogeneous-comparison
-import Data.Hetero.Role (RoleKind, KnownRole(..))
+import Data.Hetero.Role (KnownRole(..))
 import Data.Hetero.Evidence.Exactly (Exactly(..), hetTransEx, roleEx)
 
 -- }}}
 
 -- --< AtLeast >-- {{{
 
--- NOTE: This module provides what is morally
---
--- > data AtLeast r a b where
--- >   AtLeast :: r <= s => !(Exactly s a b) -> AtLeast r a b
---
--- but encoded as a newtype with a pattern synonym.
---
--- For an explanation of the techniques used, see:
---   https://gist.github.com/LSLeary/dd52b3086eb153e3c99e578f19eec1ee
---
--- In particular, the 'Existentials' and 'Equality Constaints' sections.
-
--- | Evidence @AtLeast@ as strong as that 'Exactly' corresponding to a given 'Data.Hetero.Role.Role'.
-newtype AtLeast (r :: RoleKind) a b
-  = UnsafeAtLeast{ extract :: Exactly Any a b }
-type role AtLeast nominal nominal nominal
-               -- ^^^^^^^ Necessary for soundness!
-
-{-# INLINE view #-}
-view :: AtLeast r a b -> (# Proof (r <= Any), Exactly Any a b #)
-view !al = (# unsafeCoerce (Refl @True), extract al #)
-  -- ^ Necessary for soundness!
-
-{-# COMPLETE AtLeast #-}
-{-# INLINE   AtLeast #-}
-pattern AtLeast :: () => r <= s => Exactly s a b -> AtLeast r a b
-pattern AtLeast x <- (view -> (# Refl, x #))
-  where AtLeast x = UnsafeAtLeast (unsafeCoerce x)
+data AtLeast r a b where
+  AtLeast :: r <= s => !(Exactly s a b) -> AtLeast r a b
 
 -- }}}
 
@@ -84,7 +55,7 @@ instance KnownRole r => Category (AtLeast r) where
 -- | Reflexivity.
 reflAL :: forall r a. KnownRole r => AtLeast r a a
 reflAL = case greatest (knownRole @r) of
-  Refl -> AtLeast NomEx
+  QED -> AtLeast NomEx
 
 -- | 'Data.Hetero.Role.Role'-homogeneous transitivity.
 transAL :: KnownRole r => AtLeast r a b -> AtLeast r b c -> AtLeast r a c
@@ -105,7 +76,7 @@ hetTransAL
   => AtLeast r a b -> AtLeast s b c {- ^ -}
   -> AtLeast (Min r s) a c
 hetTransAL (AtLeast e1) (AtLeast e2) = case minMono r s t u of
-  Refl -> AtLeast (hetTransEx e1 e2)
+  QED -> AtLeast (hetTransEx e1 e2)
  where
   r = knownRole @r
   s = knownRole @s

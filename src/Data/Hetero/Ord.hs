@@ -48,7 +48,7 @@ import Data.Functor.Sum (Sum(..))
 import Data.Functor.Compose (Compose(..))
 
 -- ord-axiomata
-import Data.Type.Ord.Axiomata (TotalOrder(..), minTO)
+import Data.Type.Ord.Axiomata (TotalOrder(..), minTO, Proof(..))
 import Data.Type.Ord.Lemmata (minDefl1, minDefl2)
 
 -- heterogeneous-comparison
@@ -138,12 +138,12 @@ instance (HetOrd' f, HetOrd' g) => HetOrd (Sum f g) where
   hcompare = expositRole mfg \case
     InL fx -> \case
       InL fy -> case minDefl1 rf rg of
-        Refl -> mapHO weakenAL (fx `hcompare` fy)
+        QED -> mapHO weakenAL (fx `hcompare` fy)
       InR _  -> HLT
     InR gx -> \case
       InL _  -> HGT
       InR gy -> case minDefl2 rf rg of
-        Refl -> mapHO weakenAL (gx `hcompare` gy)
+        QED -> mapHO weakenAL (gx `hcompare` gy)
    where
     rf = knownRole @(Strength f)
     rg = knownRole @(Strength g)

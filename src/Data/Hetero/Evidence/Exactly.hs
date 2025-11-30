@@ -44,7 +44,8 @@ import Data.Coerce (Coercible)
 import Control.Category (Category(..))
 
 -- ord-axiomata
-import Data.Type.Ord.Axiomata (type (<=), TotalOrder(..))
+import Data.Type.Ord.Relations (type (<=))
+import Data.Type.Ord.Axiomata (TotalOrder(..))
 
 -- heterogeneous-comparison
 import Data.Hetero.Role

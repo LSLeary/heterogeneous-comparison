@@ -38,13 +38,12 @@ module Data.Hetero.Evidence.AtLeast (
 -- --< Imports >-- {{{
 
 -- base
-import Prelude hiding (id, (.))
-import Data.Type.Equality ((:~:)(..))
 import Data.Type.Ord (Max)
 import Data.Coerce (Coercible)
 
 -- ord-axiomata
-import Data.Type.Ord.Axiomata (type (<=), TotalOrder(..))
+import Data.Type.Ord.Relations (type (<=))
+import Data.Type.Ord.Axiomata (TotalOrder(..), Proof(..))
 import Data.Type.Ord.Lemmata (maxMono)
 
 -- heterogeneous-comparison
@@ -90,7 +89,7 @@ maxAL
   => AtLeast r a b -> AtLeast s a b {- ^ -}
   -> AtLeast (Max r s) a b
 maxAL (AtLeast e1) (AtLeast e2) = case mono of
-  Refl -> AtLeast (maxEx e1 e2)
+  QED -> AtLeast (maxEx e1 e2)
  where
   mono = maxMono
     (knownRole @r) (knownRole @s)
@@ -103,7 +102,7 @@ weakenAL
   => AtLeast s a b {- ^ -}
   -> AtLeast r a b
 weakenAL (AtLeast e) = case trans of
-  Refl -> AtLeast e
+  QED -> AtLeast e
  where
   trans = transLeq (knownRole @r) (knownRole @s) (roleEx e)
 
