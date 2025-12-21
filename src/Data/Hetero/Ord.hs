@@ -63,6 +63,7 @@ import Data.Hetero.Eq (HetEq(..))
 
 -- | 'Ordering' with captured evidence.
 data HetOrdering r a b = HLT | HEQ (AtLeast r a b) | HGT
+  deriving (Show, Eq, Ord)
 
 -- | Map over the contained @t'AtLeast' r a b@.
 mapHO

@@ -77,6 +77,31 @@ pattern AtLeast x <- (view -> (# Refl, x #))
 
 -- --< AtLeast: Instances & Deps >-- {{{
 
+instance Show (AtLeast r a b) where
+  showsPrec d (AtLeast ex)
+    = showParen (d >= 11)
+    $ showString "AtLeast "
+    . showsPrec 11 ex
+
+instance Eq (AtLeast r a b) where
+  AtLeast PhantEx == AtLeast PhantEx = True
+  AtLeast ReprEx  == AtLeast ReprEx  = True
+  AtLeast NomEx   == AtLeast NomEx   = True
+  _               == _               = False
+
+instance Ord (AtLeast r a b) where
+  compare (AtLeast ex1) (AtLeast ex2) = case ex1 of
+    PhantEx -> case ex2 of
+      PhantEx -> EQ
+      _       -> LT
+    ReprEx  -> case ex2 of
+      PhantEx -> GT
+      ReprEx  -> EQ
+      NomEx   -> LT
+    NomEx   -> case ex2 of
+      NomEx   -> EQ
+      _       -> GT
+
 instance KnownRole r => Category (AtLeast r) where
   id  = reflAL
   (.) = flip transAL

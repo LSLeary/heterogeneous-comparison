@@ -63,6 +63,10 @@ data Role (r :: RoleKind) where
   Representational :: Role Representational
   Nominal          :: Role Nominal
 
+deriving instance Show (Role r)
+deriving instance Eq   (Role r)
+deriving instance Ord  (Role r)
+
 type instance Sing RoleKind = Role
 
 type family CmpRole (a :: RoleKind) (b :: RoleKind) :: Ordering where

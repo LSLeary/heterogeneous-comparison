@@ -27,10 +27,11 @@ library
                       Data.Hetero.Eq
                       Data.Hetero.Ord
                       Data.Hetero.Some
-                      Data.Hetero.ID
+                      Data.Hetero.ID.Nom
+                      Data.Hetero.ID.Repr
                       Data.Hetero.Void
                       Data.Hetero
-
+                      Control.Monad.USG
   other-modules:      Data.Hetero.Evidence.AtLeast.Internal
   hs-source-dirs:     src
   build-depends:      base         >=4.18  && <5   ,

@@ -76,6 +76,10 @@ data Exactly (r :: RoleKind) a b where
   ReprEx  :: Coercible a b => Exactly Representational a b
   NomEx   ::                  Exactly Nominal          a a
 
+deriving instance Show (Exactly r a b)
+deriving instance Eq   (Exactly r a b)
+deriving instance Ord  (Exactly r a b)
+
 instance KnownRole r => Category (Exactly r) where
   id  = reflEx
   (.) = flip transEx
